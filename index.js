@@ -1,31 +1,32 @@
 const express = require('express');
-const app = express();
+const mongoose = require('mongoose');
+const User = require('./User');
 
+const app = express();
 app.use(express.json());
 
-const users = [
-        { id: 1, name: 'Bossing Sim', city: 'Mindanao' },
-        { id: 2, name: 'juan dela Cruz', city: 'Manila' },
-        { id: 3, name: 'Maria Santos', city: 'Cebu'}
-    ]
+mongoose.connect('mongodb+srv://businesssimlloyd_db_user:SeparesSimlloyd1012@first-cluster.qfp9rzd.mongodb.net/myfirstapi-db?appName=First-Cluster')
+    .then(() => {
+        console.log('Connected to MongoDB!')
+    })
+    .catch((error) => {
+        console.log('Connection failed:', error)
+    });
+
 
 app.get('/', (req, res) => {
-    res.send('Hello! Nodemon is watching me!');
+    res.send('Hello! My server is working!');
 });
 
-app.get('/about', (req, res) => {
-    res.send('This is the about page!')
-});
-
-app.get('/users', (req, res) => {
+app.get('/users', async (req, res) => {
+    const users = await User.find();
     res.json(users);
 });
 
-app.post('/users', (req, res) => {
-    const newUser = req.body;
-    newUser.id = users.length + 1;
-    users.push(newUser);
-    res.json({ message: 'User added!', user: newUser });
+app.post('/users', async (req, res) => {
+    const newUser = new User(req.body);
+    await newUser.save();
+    res.json({ message: 'User saved!', user: newUser });
 });
 
 app.listen(3000, '0.0.0.0', () => {
