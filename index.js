@@ -39,7 +39,7 @@ app.delete('/users/:id', async (req, res) => {
 app.put('/users/:id', async (req, res) => {
     const id = req.params.id;
     const updateData = req.body;
-    const user = await User.findByIdAndUpdate(id, updateData, { new: true })
+    const user = await User.findByIdAndUpdate(id, updateData, { returnDocument: 'after' })
     res.json({ message: 'User updated!', user: user });
 });
 
