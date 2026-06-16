@@ -1,5 +1,19 @@
 const User = require('../models/User');
 
+const getSingleUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found!' });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Something went wrong', error: error.message });
+    }
+};
+
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find().select('-password');
@@ -44,4 +58,4 @@ const deleteUser = async (req, res) => {
     
 };
 
-module.exports = { getAllUsers, createUser, updateUser, deleteUser };
+module.exports = { getAllUsers, getSingleUser, createUser, updateUser, deleteUser };
